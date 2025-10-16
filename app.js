@@ -1,70 +1,60 @@
+// --- VARIABLES GLOBALES ---
+let nombre = prompt("👋 Ingresa tu nombre:") || "Jugador";
+document.getElementById("nombreJugador").textContent = nombre;
 
+let rango = 10, intentos = 3, numeroSecreto, usado = 0;
 
-console.log("🎯 Inicio del juego 'Adivina el número'");
-
-
-let numeroSecreto = Math.floor(Math.random() * 10) + 1;
-let intentos = 0;
-
-// Obtener elementos del DOM
-const inputNumero = document.getElementById("numeroInput");
-const btnIntentar = document.getElementById("btnIntentar");
-const btnReiniciar = document.getElementById("btnReiniciar");
+// --- ELEMENTOS DEL DOM ---
+const modo = document.getElementById("modo");
+const numero = document.getElementById("numero");
 const mensaje = document.getElementById("mensaje");
+const intentosTxt = document.getElementById("intentos");
 
-// Mostrar bienvenida inicial con alert
-alert("¡Bienvenido al juego de Adivina el Número! 🎲\nAdivina el número secreto entre 1 y 10.");
+// --- FUNCIONES PRINCIPALES ---
+function nuevoNumero() {
+  numeroSecreto = Math.floor(Math.random() * (rango + 1));
+  if (rango === 10 && numeroSecreto === 0) numeroSecreto = 1;
+  usado = 0;
+  numero.disabled = false;
+  document.getElementById("intentar").disabled = false;
+  intentosTxt.textContent = `Intentos restantes: ${intentos - usado}`;
+  mensaje.textContent = "";
+}
 
-// Evento: cuando el jugador hace clic en "Intentar"
-btnIntentar.addEventListener("click", () => {
-  let numeroUsuario = Number(inputNumero.value);
-
-  // Validaciones
-  if (isNaN(numeroUsuario) || inputNumero.value.trim() === "") {
-    mensaje.textContent = "⚠️ Ingresa un número válido.";
+function verificar() {
+  let n = Number(numero.value);
+  if (n < 0 || n > rango || isNaN(n)) {
+    mensaje.textContent = `⚠️ Ingresa un número entre 0 y ${rango}`;
     mensaje.style.color = "red";
-    alert("⚠️ Debes ingresar un número entre 1 y 10.");
     return;
   }
-
-  if (numeroUsuario < 1 || numeroUsuario > 10) {
-    mensaje.textContent = "❌ El número debe estar entre 1 y 10.";
-    mensaje.style.color = "red";
-    alert("❌ Solo números entre 1 y 10, por favor.");
-    return;
-  }
-
-  intentos++;
-
-  // Lógica principal del juego
-  if (numeroUsuario === numeroSecreto) {
-    mensaje.textContent = `🎉 ¡Adivinaste el número secreto ${numeroSecreto}! Lo lograste en ${intentos} intento(s).`;
+  usado++;
+  if (n === numeroSecreto) {
+    mensaje.textContent = `🎉 ¡Bien hecho ${nombre}! Adivinaste en ${usado} intento(s).`;
     mensaje.style.color = "green";
-    console.log("✅ El jugador ha ganado el juego.");
-    alert(`🎉 ¡Excelente! El número era ${numeroSecreto}. Adivinaste en ${intentos} intento(s).`);
-  } else if (numeroUsuario < numeroSecreto) {
-    mensaje.textContent = "📈 El número secreto es mayor. Intenta nuevamente.";
-    mensaje.style.color = "#007bff";
+    finJuego();
+  } else if (usado >= intentos) {
+    mensaje.textContent = `💀 Perdiste, ${nombre}. El número era ${numeroSecreto}.`;
+    mensaje.style.color = "crimson";
+    finJuego();
   } else {
-    mensaje.textContent = "📉 El número secreto es menor. Intenta nuevamente.";
-    mensaje.style.color = "#ff6600";
+    mensaje.textContent = n < numeroSecreto ? "📈 El número es mayor." : "📉 El número es menor.";
+    mensaje.style.color = n < numeroSecreto ? "#007bff" : "#ff6600";
+    intentosTxt.textContent = `Intentos restantes: ${intentos - usado}`;
   }
+  numero.value = "";
+}
 
-  inputNumero.value = "";
-  inputNumero.focus();
-});
+function finJuego() {
+  numero.disabled = true;
+  document.getElementById("intentar").disabled = true;
+}
 
-// Evento: reiniciar juego
-btnReiniciar.addEventListener("click", () => {
-  numeroSecreto = Math.floor(Math.random() * 10) + 1;
-  intentos = 0;
-  mensaje.textContent = "🔁 ¡Juego reiniciado! Adivina el nuevo número.";
-  mensaje.style.color = "#333";
-  console.log("♻️ El jugador ha reiniciado el juego.");
-  alert("🔁 El juego ha sido reiniciado. ¡Intenta nuevamente!");
-});
+// --- EVENTOS ---
+document.getElementById("intentar").onclick = verificar;
+document.getElementById("reiniciar").onclick = nuevoNumero;
+modo.onchange = () => { rango = Number(modo.value); nuevoNumero(); };
 
-// Mensaje final en consola (cuando el jugador cierra la pestaña o finaliza)
-window.addEventListener("beforeunload", () => {
-  console.log("🏁 Fin del juego.");
-});
+// --- INICIO ---
+alert(`🎮 ¡Bienvenido ${nombre}! Tienes ${intentos} intentos para adivinar.`);
+nuevoNumero();

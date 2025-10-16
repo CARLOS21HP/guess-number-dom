@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎯 Adivina el Número</title>
-  
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
+<style>
+  
+  body {
+    display: flex;
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+    /* Centra verticalmente */
+    height: 100vh;
+    
+    margin: 0;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+  }
+</style>
+
 <body>
-  <div class="container">
-    <h1>🎯 Adivina el Número</h1>
-    <p>Intenta adivinar un número entre <strong>1 y 10</strong>.</p>
-    <input type="number" id="numeroInput" placeholder="Tu número aquí">
-    <br>
-    <button id="btnIntentar">Intentar</button>
-    <button id="btnReiniciar">Reiniciar</button>
-    <div class="mensaje" id="mensaje"></div>
+
+  <h1>🎮 Adivina el Número</h1>
+  <p>👤 Jugador: <span id="nombreJugador">---</span></p>
+
+  <label>Modo:</label>
+  <select id="modo">
+    <option value="10">Fácil (1-10)</option>
+    <option value="100">Difícil (0-100)</option>
+  </select>
+
+  <div>
+    <input id="numero" type="number" placeholder="Tu número">
   </div>
+
+  <button id="intentar">Intentar</button>
+  <button id="reiniciar">Reiniciar</button>
+
+  <p id="intentos"></p>
+  <p id="mensaje"></p>
 
   <script src="app.js"></script>
 </body>
+
 </html>
